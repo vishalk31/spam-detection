@@ -1,0 +1,38 @@
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+import nltk.classify.util
+from nltk.classify import NaiveBayesClassifier
+import os
+spam=[]
+ham=[]
+path="C:\\Users\\Vishal\\Desktop\\ling-spam\\ham\\"
+path2="C:\\Users\\Vishal\\Desktop\\ling-spam\\spam\\"
+def create_word_features(words):
+    x=words.split(" ")
+    useful_words=[]
+    useless_words=stopwords.words("english")
+    for i in x:
+        if(i.isalpha()==True)and i not in useless_words:
+            useful_words.append(i)
+    my_dict = dict([(use, True) for use in useful_words])
+    return my_dict
+
+
+filelist = os.listdir(path)
+for i in filelist: # You could also add "and i.startswith('f')
+        with open(path + i, 'r') as f:
+            for line in f:
+                ham.append((create_word_features(line),"ham"))
+     
+filelist1 = os.listdir(path2)
+for j in filelist1: # You could also add "and i.startswith('f')
+        with open(path2 + j, 'r') as k:
+            for line1 in k:
+                spam.append((create_word_features(line1),"spam"))
+
+train_set = ham[:1000] + spam[:1000]
+test_set =  ham[443:] + spam[443:]
+print(len(train_set),  len(test_set))
+classifier = NaiveBayesClassifier.train(train_set)
+accuracy = nltk.classify.util.accuracy(classifier, test_set)
+print(accuracy * 100)
