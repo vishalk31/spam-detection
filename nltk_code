@@ -3,36 +3,36 @@ from nltk.tokenize import word_tokenize
 import nltk.classify.util
 from nltk.classify import NaiveBayesClassifier
 import os
-spam=[]
-ham=[]
-path="C:\\Users\\Vishal\\Desktop\\ling-spam\\ham\\"
-path2="C:\\Users\\Vishal\\Desktop\\ling-spam\\spam\\"
-def create_word_features(words):
-    x=words.split(" ")
-    useful_words=[]
-    useless_words=stopwords.words("english")
-    for i in x:
-        if(i.isalpha()==True)and i not in useless_words:
-            useful_words.append(i)
-    my_dict = dict([(use, True) for use in useful_words])
+spam=[] #a list is created to store spam 
+ham=[] #a list is created to store ham 
+path="path" # path of the ham mails is given by the user  
+path2="path" # path of the spam mails is given by the user 
+def create_word_features(words):# function is called from the line 25 and 31
+    word=words.split(" ")# splitting a word with spaces
+    useful_words=[]#list of useful words are stored
+    useless_words=stopwords.words("english") #stopwords.words("english") it contains all useless word such as is,was,a
+    for i in word:
+        if(i.isalpha()==True)and i not in useless_words:# removes all numbers and single line code
+            useful_words.append(i)# useful words are appended to useful
+    my_dict = dict([(use, True) for use in useful_words])# list comphrension to store the words in NaiveBayes classifier format (word, any string)
     return my_dict
 
 
-filelist = os.listdir(path)
+filelist = os.listdir(path) # it takes the path full of files
 for i in filelist: # You could also add "and i.startswith('f')
         with open(path + i, 'r') as f:
             for line in f:
                 ham.append((create_word_features(line),"ham"))
      
-filelist1 = os.listdir(path2)
+filelist1 = os.listdir(path2) # it takes the path full of files
 for j in filelist1: # You could also add "and i.startswith('f')
         with open(path2 + j, 'r') as k:
             for line1 in k:
                 spam.append((create_word_features(line1),"spam"))
 
-train_set = ham[:1000] + spam[:1000]
-test_set =  ham[443:] + spam[443:]
-print(len(train_set),  len(test_set))
-classifier = NaiveBayesClassifier.train(train_set)
+train_set = ham[:1000] + spam[:1000]# training set
+test_set =  ham[1000:] + spam[1000:]# test set 
+# print(len(train_set),  len(test_set)) 
+classifier = NaiveBayesClassifier.train(train_set) # classifying the words with NaiveBayesClassifier
 accuracy = nltk.classify.util.accuracy(classifier, test_set)
 print(accuracy * 100)
